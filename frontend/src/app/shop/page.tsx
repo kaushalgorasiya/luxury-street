@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal, Heart } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
@@ -22,7 +22,7 @@ interface Product {
   category?: { name: string };
 }
 
-export default function ShopPage() {
+function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -227,5 +227,13 @@ export default function ShopPage() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }
