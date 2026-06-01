@@ -16,6 +16,7 @@ export default function Navbar() {
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,21 +24,29 @@ export default function Navbar() {
       router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
       setSearchQuery("");
+      setIsMobileMenuOpen(false);
     }
   };
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          <button className="md:hidden p-2 -ml-2" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <div className="space-y-1.5"><span className="block w-5 h-0.5 bg-foreground"></span><span className="block w-5 h-0.5 bg-foreground"></span><span className="block w-5 h-0.5 bg-foreground"></span></div>}
+          </button>
           <Link href="/" className="flex items-center gap-2 text-2xl font-heading font-bold tracking-wider text-primary">
-            <img src="/logo.png" alt="Luxury Street Logo" className="w-10 h-10 object-contain rounded-full" />
-            <span className="text-xl font-bold tracking-widest text-[#005B41] font-heading">LUXURY STREET</span>
+            <img src="/logo.png" alt="Luxury Street Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain rounded-full" />
+            <span className="text-lg md:text-xl font-bold tracking-widest text-[#005B41] font-heading hidden sm:inline-block">LUXURY STREET</span>
           </Link>
-          <nav className="hidden md:flex gap-6 text-sm font-medium">
+          <nav className="hidden md:flex gap-6 text-sm font-medium ml-4">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
             <Link href="/shop" className="hover:text-accent transition-colors">Shop</Link>
             <Link href="/brands" className="hover:text-accent transition-colors">Brands</Link>
@@ -46,10 +55,10 @@ export default function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <div className="relative flex items-center">
             {isSearchOpen ? (
-              <form onSubmit={handleSearch} className="flex items-center bg-background border border-border rounded-full px-2 py-1 shadow-sm w-48 md:w-64 absolute right-0 z-10">
+              <form onSubmit={handleSearch} className="flex items-center bg-background border border-border rounded-full px-2 py-1 shadow-sm w-40 md:w-64 absolute right-0 z-10">
                 <input
                   type="text"
                   placeholder="Search..."
@@ -70,7 +79,7 @@ export default function Navbar() {
           </div>
           
           {/* Wishlist Link */}
-          <Link href="/favorites" className="p-2 hover:text-accent transition-colors relative" title="Favorites">
+          <Link href="/favorites" className="p-2 hover:text-accent transition-colors relative hidden sm:flex" title="Favorites">
             <Heart className="w-5 h-5" />
             {wishlistCount > 0 && (
               <span className="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -90,13 +99,13 @@ export default function Navbar() {
           </Link>
           
           {user ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               {user.role === "admin" && (
-                <Link href="/admin" className="p-2 hover:text-accent transition-colors flex items-center gap-1 text-xs font-semibold text-accent uppercase tracking-wider bg-accent/10 rounded px-2" title="Admin Panel">
-                  <Settings className="w-4 h-4" /> Admin
+                <Link href="/admin" className="p-2 hover:text-accent transition-colors flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-accent uppercase tracking-wider bg-accent/10 rounded px-2" title="Admin Panel">
+                  <Settings className="w-4 h-4" /> <span className="hidden sm:inline">Admin</span>
                 </Link>
               )}
-              <span className="text-sm font-semibold hidden md:inline text-primary">
+              <span className="text-sm font-semibold hidden md:inline text-primary truncate max-w-24">
                 Hi, {user.name.split(" ")[0]}
               </span>
               <button onClick={logout} className="p-2 hover:text-red-500 transition-colors" title="Logout">
@@ -110,6 +119,20 @@ export default function Navbar() {
           )}
         </div>
       </div>
+      
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b shadow-lg py-4 px-4 flex flex-col gap-4 z-40">
+          <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-accent">Home</Link>
+          <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-accent">Shop</Link>
+          <Link href="/brands" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-accent">Brands</Link>
+          <Link href="/categories" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-accent">Categories</Link>
+          <Link href="/collections" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-accent">Collections</Link>
+          <Link href="/favorites" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-accent flex items-center gap-2">
+            Favorites <Heart className="w-4 h-4" /> {wishlistCount > 0 && `(${wishlistCount})`}
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

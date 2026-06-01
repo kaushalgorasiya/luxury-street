@@ -85,9 +85,9 @@ export default function Home() {
         {/* Trending Products Grid (12 Items) */}
         <section className="py-20 bg-secondary">
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-end mb-10">
-              <h2 className="text-3xl font-heading font-bold text-primary uppercase tracking-widest">Trending Collection</h2>
-              <Link href="/shop" className="text-accent font-medium hover:underline">View All Products</Link>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-10">
+              <h2 className="text-3xl font-heading font-bold text-primary uppercase tracking-widest text-center sm:text-left w-full sm:w-auto">Trending Collection</h2>
+              <Link href="/shop" className="text-accent font-medium hover:underline mx-auto sm:mx-0">View All Products</Link>
             </div>
             
             {loading ? (

@@ -120,7 +120,7 @@ export default function AdminDashboard() {
                     <p className="text-sm text-muted-foreground truncate">{product.brand?.name || "Luxury Brand"}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold">Stock: {product.stock}</p>
+                    <p className="font-bold">Stock: {product.inStock ? "In Stock" : "Out of Stock"}</p>
                     <p className="text-sm font-bold text-accent">${product.price.toLocaleString()}</p>
                   </div>
                 </div>
