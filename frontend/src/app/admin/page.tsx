@@ -86,7 +86,7 @@ export default function AdminDashboard() {
                 <div key={order._id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
                   <div>
                     <p className="font-semibold">Order #{order._id.substring(18).toUpperCase()}</p>
-                    <p className="text-sm text-muted-foreground">{order.user?.name || "Guest"} • {new Date(order.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm text-muted-foreground">{order.user?.name || order.guestName || "Guest"} • {new Date(order.createdAt).toLocaleDateString()}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-primary">${order.totalAmount.toLocaleString()}</p>
