@@ -86,8 +86,8 @@ export default function AdminOrdersPage() {
                     >
                       <td className="p-4 font-semibold text-primary">#{order._id.substring(18).toUpperCase()}</td>
                       <td className="p-4">
-                        <p className="font-medium">{order.user?.name || "Guest"}</p>
-                        <p className="text-xs text-muted-foreground">{order.user?.email || "N/A"}</p>
+                        <p className="font-medium">{order.user?.name || (order as any).guestName || "Guest"}</p>
+                        <p className="text-xs text-muted-foreground">{order.user?.email || (order as any).guestEmail || "N/A"}</p>
                       </td>
                       <td className="p-4">{order.products?.length || 0}</td>
                       <td className="p-4 font-bold text-accent">${order.totalAmount.toLocaleString()}</td>

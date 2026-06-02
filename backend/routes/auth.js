@@ -13,7 +13,13 @@ router.post('/register', async (req, res) => {
     if (userExists) return res.status(400).json({ message: 'User already exists' });
     const user = await User.create({ name, email, password });
     const token = generateToken(user._id);
-    res.cookie('token', token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: isProd ? 'none' : 'lax',
+      secure: isProd
+    });
     res.json({ _id: user._id, name: user.name, email: user.email, role: user.role });
   } catch (error) { res.status(500).json({ message: error.message }); }
 });
@@ -24,7 +30,13 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = generateToken(user._id);
-      res.cookie('token', token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
+      const isProd = process.env.NODE_ENV === 'production';
+      res.cookie('token', token, { 
+        httpOnly: true, 
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        sameSite: isProd ? 'none' : 'lax',
+        secure: isProd
+      });
       res.json({ _id: user._id, name: user.name, email: user.email, role: user.role });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -33,7 +45,13 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-  res.cookie('token', '', { httpOnly: true, expires: new Date(0) });
+  const isProd = process.env.NODE_ENV === 'production';
+  res.cookie('token', '', { 
+    httpOnly: true, 
+    expires: new Date(0),
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd
+  });
   res.json({ message: 'Logged out successfully' });
 });
 
