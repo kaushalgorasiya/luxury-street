@@ -18,16 +18,25 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all origins for now, tighten later
+      callback(null, true);
     }
   },
   credentials: true
 }));
+
+// Root route - this prevents 404 on base URL
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Luxury Street Backend API is running' });
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'API is running' });
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -38,29 +47,30 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/orders', require('./routes/orders'));
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Luxury Street API is running' });
-});
+// Connect to MongoDB (non-blocking for serverless)
+let isConnected = false;
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'Luxury Street Backend API' });
-});
-
-// Connect to MongoDB
-const PORT = process.env.PORT || 5000;
-
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    isConnected = true;
     console.log('Connected to MongoDB');
-    if (process.env.NODE_ENV !== 'production') {
-      app.listen(PORT, () => {
-        console.log('Server running on port ' + PORT);
-      });
-    }
-  })
-  .catch((err) => console.error('MongoDB connection error:', err));
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+  }
+};
+
+// Connect on startup
+connectDB();
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log('Server running on port ' + PORT);
+  });
+}
 
 // Export for Vercel serverless
 module.exports = app;
