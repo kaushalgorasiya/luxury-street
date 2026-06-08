@@ -83,7 +83,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/orders', require('./routes/orders'));
 
 // 404 handler for unknown routes
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({ message: `Route ${req.originalUrl} not found` });
 });
 

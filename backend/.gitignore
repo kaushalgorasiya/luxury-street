@@ -1,2 +1,7 @@
 node_modules
 .env
+.env*
+.vercel
+logs.txt
+logs_expand.txt
+*.decrypted
